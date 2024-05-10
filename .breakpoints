@@ -1,0 +1,32 @@
+{
+  "files": {
+    "routes/dishes.js": [
+      {
+        "id": "65e90570-daa1-4a04-962d-e30fa2f009b1",
+        "line": 12,
+        "version": 592,
+        "index": 228
+      },
+      {
+        "id": "1bc99725-e497-4608-b982-1dc9726e66d2",
+        "line": 89,
+        "version": 580,
+        "index": 2257
+      },
+      {
+        "id": "26529b86-defc-404a-bf53-4d7d3780de6c",
+        "line": 104,
+        "version": 580,
+        "index": 2949
+      }
+    ],
+    "server.js": [
+      {
+        "id": "fe79c92b-dad5-480a-9dc0-fb729ac9213a",
+        "line": 10,
+        "version": 130,
+        "index": 293
+      }
+    ]
+  }
+}

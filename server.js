@@ -5,7 +5,9 @@ const sequelize = require('./database');
 const dishRoutes = require('./routes/dishes');
 const filesRoutes = require('./routes/files');
 const ingredientRoutes = require('./routes/ingredients');
-const { Dish, Ingredient, DishIngredient } = require('./models');
+const menusRoutes = require('./routes/menus');
+
+
 
 
 
@@ -29,6 +31,7 @@ app.use((req, res, next) => {
 app.use('/dishes', dishRoutes);
 app.use('/ingredients', ingredientRoutes);
 app.use('/files', filesRoutes);
+app.use('/menus', menusRoutes);
 
 
 const PORT = process.env.PORT || 5000;

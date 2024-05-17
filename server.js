@@ -6,7 +6,7 @@ const dishRoutes = require('./routes/dishes');
 const filesRoutes = require('./routes/files');
 const ingredientRoutes = require('./routes/ingredients');
 const menusRoutes = require('./routes/menus');
-
+const { Dish, Ingredient, DishIngredient } = require('./models');
 
 
 

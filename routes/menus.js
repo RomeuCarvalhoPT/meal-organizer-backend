@@ -1,37 +1,31 @@
 // routes/menus.js
 const express = require("express");
 const router = express.Router();
-const { Menus, Dish,ShoppingList,Ingredient,ShoppingListIngredients,MenuDishes} = require("../models");
+const { Menus, Dish,ShoppingList,Ingredient,ShoppingListIngredients,MenuDishes,DishIngredient} = require("../models");
 
 // Create a new menu
 router.post("/generate-menu/:numOfDishes", async (req, res) => {
   try {
-
-    //await Menus.drop();
-    //await ShoppingList.drop();
-    //await ShoppingListIngredients.drop();
-    //await MenuDishes.drop();
-    
     const numDishes  = req.params.numOfDishes;
     const dishes = await Dish.findAll({ include: Ingredient });
     const randomDishes = getRandomDishes(dishes, numDishes);
-
-    const ingredientsSet = new Set();
-    randomDishes.forEach(dish => {
-      dish.Ingredients.forEach(ingredient => {
-        ingredientsSet.add(ingredient);
-      });
-    });
-
-    const ingredients = Array.from(ingredientsSet);
-    const shoppingList = await ShoppingList.create();
-    await shoppingList.addIngredients(ingredients);
-
     const menu = await Menus.create()
     await menu.addDishes(randomDishes);
-    await menu.setShoppingList(shoppingList);
+    const fullMenu = await Menus.findByPk(menu.id, {
+        include: [
+          {
+            model: Dish,
+            include: [
+              {
+                model: Ingredient,
+                through: DishIngredient,
+              },
+            ]
+          },
 
-    res.json(menu);
+        ],
+      });
+    res.json(fullMenu);
   } catch (error) {
     console.error('Error generating menu:', error);
     res.status(500).json({ error: error.message });
@@ -60,10 +54,23 @@ router.post('/save-menu/:id', async (req, res) => {
 
 
 // Get a menu by ID
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
-    const  id  = req.params.id;
-    const menu = await Menus.findByPk(id, { include: [Dish, { model: ShoppingList, include: [Ingredient] }] });
+    const id = req.params.id;
+    const menu = await Menus.findByPk(id, {
+      include: [
+        {
+          model: Dish,
+          include: [
+            {
+              model: Ingredient,
+              through: DishIngredient,
+            },
+          ]
+        },
+
+      ],
+    });
     if (!menu) {
       return res.status(404).json({ error: 'Menu not found' });
     }

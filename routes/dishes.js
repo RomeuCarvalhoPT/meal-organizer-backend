@@ -92,7 +92,15 @@ router.put("/:id", async (req, res) => {
     const dish = await Dish.findByPk(req.params.id);
     if (dish) {
       await dish.update({ name, picture });
+
+
+      console.log(await DishIngredient.findAll());
+
+
+      
       await DishIngredient.destroy({ where: { DishId: dish.id } }); 
+
+      console.log(await DishIngredient.findAll());
       // Add new associations
       if (Ingredients && Ingredients.length > 0) {
         for (const ingredient of Ingredients) {

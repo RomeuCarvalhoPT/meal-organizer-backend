@@ -1,49 +1,35 @@
 {
   "files": {
-    "routes/dishes.js": [
-      {
-        "id": "aa984319-5c4c-45be-b674-4768177dd7d8",
-        "line": 90,
-        "version": 624,
-        "index": 2228
-      },
-      {
-        "id": "944d3569-3af0-4b7e-b10a-7c123b0e7e1b",
-        "line": 109,
-        "version": 624,
-        "index": 2839
-      },
-      {
-        "id": "8615c953-de3f-420d-9b96-42d838732eef",
-        "line": 114,
-        "version": 624,
-        "index": 3042
-      }
-    ],
     "routes/menus.js": [
       {
-        "id": "f121a6a3-4aa3-4e7d-b8fe-07de8b65d462",
-        "line": 15,
-        "version": 236,
-        "index": 427
+        "id": "66e78462-7fca-49af-beec-4ef33d18c05d",
+        "line": 35,
+        "version": 539,
+        "index": 993
       },
       {
-        "id": "a7ddb3d8-25c4-40dd-9aeb-3b6d9954ea49",
-        "line": 19,
-        "version": 294,
-        "index": 600
+        "id": "0e41a3a4-88bf-4f86-884e-3596067f8f8b",
+        "line": 35,
+        "version": 539,
+        "index": 993
       },
       {
-        "id": "09d83ab4-9de3-45e1-ab3b-fdcd7746151d",
-        "line": 28,
-        "version": 236,
-        "index": 912
+        "id": "0a84b5d7-e59e-4d75-9700-7864f9ff0768",
+        "line": 67,
+        "version": 539,
+        "index": 1826
       },
       {
-        "id": "3bc69383-66ce-4e58-95d5-d416ec44d318",
-        "line": 28,
-        "version": 236,
-        "index": 912
+        "id": "21b4af2a-5efb-44cb-a607-6ee22ec60eda",
+        "line": 164,
+        "version": 539,
+        "index": 4369
+      },
+      {
+        "id": "33b3b84e-6fd4-4803-880b-d946404d6402",
+        "line": 164,
+        "version": 539,
+        "index": 4369
       }
     ]
   }

@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   app:
-    build: .
+    container_name: meal-organizer-backend
+    image: meal-organizer-backend:latest
+    restart: unless-stopped
     ports:
       - '5000:5000'
     volumes:

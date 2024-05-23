@@ -80,6 +80,7 @@ router.get("/:id", async (req, res) => {
             ],
           },
         ],
+order: [['createdAt', 'DESC']]
       });
       res.json(menu);
     } else {

@@ -1,35 +1,25 @@
 {
   "files": {
-    "routes/menus.js": [
+    "models/User.js": [
       {
-        "id": "66e78462-7fca-49af-beec-4ef33d18c05d",
-        "line": 35,
-        "version": 539,
-        "index": 993
+        "id": "0a0ac33a-85e4-4848-8b9d-0e34b1c84496",
+        "line": 4,
+        "version": 96,
+        "index": 87
       },
       {
-        "id": "0e41a3a4-88bf-4f86-884e-3596067f8f8b",
-        "line": 35,
-        "version": 539,
-        "index": 993
-      },
+        "id": "cbf69c12-a5a1-4ac1-bedc-7151a0677081",
+        "line": 16,
+        "version": 96,
+        "index": 301
+      }
+    ],
+    "routes/users.js": [
       {
-        "id": "0a84b5d7-e59e-4d75-9700-7864f9ff0768",
-        "line": 67,
-        "version": 539,
-        "index": 1826
-      },
-      {
-        "id": "21b4af2a-5efb-44cb-a607-6ee22ec60eda",
-        "line": 164,
-        "version": 539,
-        "index": 4369
-      },
-      {
-        "id": "33b3b84e-6fd4-4803-880b-d946404d6402",
-        "line": 164,
-        "version": 539,
-        "index": 4369
+        "id": "12bebdca-21e2-484f-8fe5-7da2d3907dc8",
+        "line": 15,
+        "version": 159,
+        "index": 482
       }
     ]
   }

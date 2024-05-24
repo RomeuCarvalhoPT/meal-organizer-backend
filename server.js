@@ -6,7 +6,8 @@ const dishRoutes = require('./routes/dishes');
 const filesRoutes = require('./routes/files');
 const ingredientRoutes = require('./routes/ingredients');
 const menusRoutes = require('./routes/menus');
-const { Dish, Ingredient, DishIngredient } = require('./models');
+const usersRoutes = require('./routes/users');
+const { Dish, Ingredient, DishIngredient,Users, Menus, MenuDishes } = require('./models');
 
 
 
@@ -18,7 +19,7 @@ app.use(cors());
 
 
 // Sync models with the database
-sequelize.sync() // Use { force: true } for development to drop tables and recreate them
+sequelize.sync({force: true}) // Use { force: true } for development to drop tables and recreate them
  .then(() => console.log('Database & tables created!'))
  .catch(err => console.error('Error syncing models:', err));
 
@@ -32,6 +33,7 @@ app.use('/dishes', dishRoutes);
 app.use('/ingredients', ingredientRoutes);
 app.use('/files', filesRoutes);
 app.use('/menus', menusRoutes);
+app.use('/users', usersRoutes);
 
 
 const PORT = process.env.PORT || 5000;

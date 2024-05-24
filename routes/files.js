@@ -8,7 +8,7 @@ router.post("/upload", upload.single("image"), (req, res) => {
   try {
     // Respond with the URL of the uploaded file
     const host = req.get('host');
-    const filePath = "https://" + host + "/files/" + req.file.filename;
+    const filePath = "http://" + host + "/files/" + req.file.filename;
 
     return res
       .status(200)

@@ -7,11 +7,20 @@ const filesRoutes = require('./routes/files');
 const ingredientRoutes = require('./routes/ingredients');
 const menusRoutes = require('./routes/menus');
 const { Dish, Ingredient, DishIngredient } = require('./models');
-
+const https = require('https');
+const fs = require('fs');
 
 
 
 const app = express();
+
+// Load SSL certificate and key
+const sslOptions = {
+  key: fs.readFileSync('./server.key'),
+  cert: fs.readFileSync('./server.cert')
+};
+
+
 app.use(express.json());
 
 const corsOptions = {
@@ -42,4 +51,8 @@ app.use('/menus', menusRoutes);
 
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+//app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+
+https.createServer(sslOptions, app).listen(PORT, () => {
+  console.log(`HTTPS Server running on port ${PORT}`);
+});

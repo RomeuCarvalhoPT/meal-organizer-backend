@@ -13,7 +13,14 @@ const { Dish, Ingredient, DishIngredient } = require('./models');
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+
+const corsOptions = {
+  origin: '*', // Allow all origins or replace '*' with your frontend's domain
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'] // Specify allowed headers
+};
+
+app.use(cors(corsOptions)); // Apply customized CORS settings
 
 
 

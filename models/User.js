@@ -13,6 +13,6 @@ const Users = sequelize.define('Users', {
     noNull: true,
   },
 });
-console.log(Users === sequelize.models.User);
+
 
 module.exports = Users;

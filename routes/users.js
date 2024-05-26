@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const { Users } = require('./../models');
+const { Users } = require('./../models/User');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const secret = 'your_jwt_secret'; // Keep this in an environment variable in production

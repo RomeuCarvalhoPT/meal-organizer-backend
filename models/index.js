@@ -4,6 +4,7 @@ const Ingredient = require('./Ingredient');
 const DishIngredient = require('./DishIngredient');
 const Menus = require('./Menu');
 const MenuDishes = require('./MenuDishes');
+const User = require('./User');
 
 // Associate models
 Dish.belongsToMany(Ingredient, { through: DishIngredient });
@@ -17,5 +18,6 @@ module.exports = {
  Ingredient,
  DishIngredient,
  Menus,
- MenuDishes
+ MenuDishes,
+ User
 };

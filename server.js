@@ -51,8 +51,8 @@ app.use('/menus', menusRoutes);
 
 
 const PORT = process.env.PORT || 5000;
-//app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
-https.createServer(sslOptions, app).listen(PORT, () => {
-  console.log(`HTTPS Server running on port ${PORT}`);
-});
+//https.createServer(sslOptions, app).listen(PORT, () => {
+//  console.log(`HTTPS Server running on port ${PORT}`);
+//});

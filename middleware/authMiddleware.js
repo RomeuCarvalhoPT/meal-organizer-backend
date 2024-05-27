@@ -1,6 +1,11 @@
+const jwt = require('jsonwebtoken');
+const secret = 'your_jwt_secret'; // Use an environment variable in production
+
 const authMiddleware = (req, res, next) => {
   const token = req.header('x-auth-token');
-  if (!token) return res.status(401).json({ message: 'No token, authorization denied' });
+  if (!token) {
+    return res.status(401).json({ message: 'No token, authorization denied' });
+  }
 
   try {
     const decoded = jwt.verify(token, secret);

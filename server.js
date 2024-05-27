@@ -23,10 +23,30 @@ const sslOptions = {
 
 app.use(express.json());
 
+const allowedOrigins = ['https://44f653f5-ffd5-4b16-9b07-5c38eae21ce0-00-2f8wfwl8eu9qj.riker.replit.dev',
+                        'http://192.168.1.112', 
+                        /\.246436646\.xyz$/];
+
 const corsOptions = {
-  origin: '*', // Allow all origins or replace '*' with your frontend's domain
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization'] // Specify allowed headers
+  origin: function (origin, callback) {
+    // Allow requests with no origin, like mobile apps or curl requests
+    if (!origin) return callback(null, true);
+
+    // Check if the origin is in the list of allowed origins
+    const isAllowed = allowedOrigins.some((allowedOrigin) => {
+      if (allowedOrigin instanceof RegExp) {
+        return allowedOrigin.test(origin);
+      }
+      return allowedOrigin === origin;
+    });
+
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
 app.use(cors(corsOptions)); // Apply customized CORS settings

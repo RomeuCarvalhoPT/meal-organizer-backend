@@ -6,16 +6,21 @@ const {
   Dish,
   ShoppingList,
   Ingredient,
-  ShoppingListIngredients,
+  User,
   MenuDishes,
   DishIngredient,
 } = require("../models");
+const { expressjwt: jwt } = require('express-jwt');
+
+
+router.use('/', jwt({ secret: 'your_jwt_secret', algorithms: ['HS256'] }));
 
 // Create a new menu
 router.post("/generate-menu/:numOfDishes", async (req, res) => {
   try {
+    const userId = req.auth.id; // Extract userId from the token
     const numDishes = req.params.numOfDishes;
-    const dishes = await Dish.findAll({ include: Ingredient });
+    const dishes = await Dish.findAll({ include: Ingredient, where: { userId: userId } });
     const randomDishes = getRandomDishes(dishes, numDishes);
     const menu = { dishes: randomDishes }; // Create a menu object without saving it to the database
     const fullMenu = {
@@ -32,15 +37,17 @@ router.post("/generate-menu/:numOfDishes", async (req, res) => {
 // Save a menu to the database
 router.post("/save", async (req, res) => {
   try {
+    const userId = req.auth.id; // Extract userId from the token
     const menuToCreate = req.body;
-    console.log(menuToCreate.dishes);
+    //console.log(menuToCreate.dishes);
     // Create a new menu entry
-    const newMenu = await Menus.create({ Dishes: menuToCreate.dishes });
+    const newMenu = await Menus.create({ Dishes: menuToCreate.dishes, userId: userId });
     // Loop through each dish and create an entry in MenuDishes
     for (const dish of menuToCreate.dishes) {
-      await MenuDishes.create({ MenuId: newMenu.id, DishId: dish.id });
+      await MenuDishes.create({ MenuId: newMenu.id, DishId: dish.id, userId: userId });
     }
-    const updatedMenu = await Menus.findByPk(newMenu.id, {
+    const updatedMenu = await Menus.findOne({
+      where:{id: newMenu.id, userId: userId},
       include: [
         {
           model: Dish,
@@ -66,9 +73,11 @@ router.post("/save", async (req, res) => {
 // Get a menu by ID
 router.get("/:id", async (req, res) => {
   try {
+    const userId = req.auth.id; // Extract userId from the token
     const id = req.params.id;
     if (id == "all") {
       const menu = await Menus.findAll({
+        where: { userId: userId },
         include: [
           {
             model: Dish,
@@ -84,7 +93,8 @@ order: [['createdAt', 'DESC']]
       });
       res.json(menu);
     } else {
-      const menu = await Menus.findByPk(id, {
+      const menu = await Menus.findOne({
+        where: { id: id, userId: userId },
         include: [
           {
             model: Dish,
@@ -109,68 +119,15 @@ order: [['createdAt', 'DESC']]
   }
 });
 
-// Get a shopping list for a menu
-router.get("/:id/shopping-list", async (req, res) => {
-  try {
-    const id = req.params.id;
-
-    const menu = await Menus.findByPk(id, {
-      include: [
-        {
-          model: Dish,
-          include: [
-            {
-              model: Ingredient,
-              through: DishIngredient,
-            },
-          ],
-        },
-      ],
-    });
-
-    if (!menu) {
-      return res.status(404).json({ error: "Menu not found" });
-    }
-
-    const shoppingList = {};
-    // Loop through each dish in the menu
-    for (const dish of menu.Dishes) {
-      // Loop through each ingredient in the dish
-      for (const ingredient of dish.Ingredients) {
-        // If the ingredient is already in the shopping list, add its quantity to the existing entry
-        if (shoppingList[ingredient.name]) {
-          shoppingList[ingredient.name] += " + " + ingredient.DishIngredient.quantity;
-        } else {
-          // Otherwise, add the ingredient to the shopping list with its quantity
-          shoppingList[ingredient.name] = ingredient.DishIngredient.quantity;
-        }
-      }
-    }
-
-    // Sort the shopping list alphabetically
-    const sortedShoppingList = Object.entries(shoppingList)
-      .sort((a, b) => a[0].localeCompare(b[0]))
-      .reduce((obj, [key, value]) => {
-        obj[key] = value;
-        return obj;
-      }, {});
-
-    res.json(sortedShoppingList);
-  } catch (error) {
-    console.error("Error fetching shopping list:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-
 
 // Delete a menu by ID
 router.delete("/:id", async (req, res) => {
   try {
+    const userId = req.auth.id; // Extract userId from the token
     const id = req.params.id;
-
-    const menu = await Menus.findByPk(id);
-
+    const menu = await Menus.findOne({
+      where: { id: id, userId: userId },
+    });
     if (!menu) {
       return res.status(404).json({ error: "Menu not found" });
     }

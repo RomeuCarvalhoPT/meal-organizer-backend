@@ -1,23 +1,25 @@
 // routes/dishes.js
 const express = require("express");
 const router = express.Router();
-const { Dish, Ingredient, DishIngredient } = require("../models");
+const { Dish, Ingredient, DishIngredient, Users } = require("../models");
+const { expressjwt: jwt } = require("express-jwt");
+const { where } = require("sequelize");
 
-
-
+router.use("/", jwt({ secret: "your_jwt_secret", algorithms: ["HS256"] }));
 
 // Create a new dish
 router.post("/", async (req, res) => {
+  const userId = req.auth.id; // Extract username from the token
   try {
     const { name, picture, Ingredients } = req.body;
-    const dish = await Dish.create({ name, picture });
+    const dish = await Dish.create({ name, picture, userId });
     const dishId = dish.id; // Make sure to get the ID of the newly created dish
     if (Ingredients && Ingredients.length > 0) {
       for (const ingredient of Ingredients) {
-        const { id,name, DishIngredient: newDishIngredient } = ingredient;
-        const {quantity} = newDishIngredient;
+        const { id, name, DishIngredient: newDishIngredient } = ingredient;
+        const { quantity } = newDishIngredient;
         const [ingredientInstance, created] = await Ingredient.findOrCreate({
-          where: { name: name },
+          where: { name: name, userId: userId },
           defaults: { name: name },
         });
         if (ingredientInstance) {
@@ -25,19 +27,20 @@ router.post("/", async (req, res) => {
             DishId: dish.id,
             IngredientId: ingredientInstance.id,
             quantity: quantity,
+            userId: userId,
           });
         }
-
       }
     }
     res.status(201).json(dish);
   } catch (err) {
-    res.status(500).json({ message: err.original.message});
+    res.status(500).json({ message: err.original.message });
   }
 });
 
 // Retrieve all dishes
 router.get("/", async (req, res) => {
+  const userId = req.auth.id; // Extract username from the token
   try {
     const dishes = await Dish.findAll({
       include: [
@@ -47,16 +50,8 @@ router.get("/", async (req, res) => {
           as: "Ingredients",
         },
       ],
+      where: { userId: userId },
     });
-    res.json(dishes);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-router.get("/aaa", async (req, res) => {
-  try {
-    const dishes = await DishIngredient.findAll();
     res.json(dishes);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -66,7 +61,14 @@ router.get("/aaa", async (req, res) => {
 // Retrieve a dish by ID
 router.get("/:id", async (req, res) => {
   try {
-    const dish = await Dish.findByPk(req.params.id, {
+    const userId = req.auth.id; // Extract userId from the token
+
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID not found in token' });
+    }
+
+    const dish = await Dish.findOne({
+      where: { id: req.params.id, userId: userId },
       include: [
         {
           model: Ingredient,
@@ -75,6 +77,7 @@ router.get("/:id", async (req, res) => {
         },
       ],
     });
+
     if (dish) {
       res.json(dish);
     } else {
@@ -85,29 +88,26 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+
 // Update a dish by ID
 router.put("/:id", async (req, res) => {
+  const userId = req.auth.id;
   try {
     const { name, picture, Ingredients } = req.body;
-    const dish = await Dish.findByPk(req.params.id);
+    const dish = await Dish.findOne({
+      where: { id: req.params.id, userId: userId },
+    });
     if (dish) {
-      await dish.update({ name, picture });
-
-
-      console.log(await DishIngredient.findAll());
-
-
-      
-      await DishIngredient.destroy({ where: { DishId: dish.id } }); 
-
-      console.log(await DishIngredient.findAll());
-      // Add new associations
+      await dish.update({ name, picture, userId });
+      await DishIngredient.destroy({
+        where: { DishId: dish.id, userId: userId },
+      });
       if (Ingredients && Ingredients.length > 0) {
         for (const ingredient of Ingredients) {
-          const { id,name, DishIngredient: newDishIngredient } = ingredient;
-          const {quantity} = newDishIngredient;
+          const { id, name, DishIngredient: newDishIngredient } = ingredient;
+          const { quantity } = newDishIngredient;
           const [ingredientInstance, created] = await Ingredient.findOrCreate({
-            where: { name: name },
+            where: { name: name, userId: userId },
             defaults: { name: name },
           });
           if (ingredientInstance) {
@@ -115,9 +115,9 @@ router.put("/:id", async (req, res) => {
               DishId: dish.id,
               IngredientId: ingredientInstance.id,
               quantity: quantity,
+              userId: userId,
             });
           }
-          
         }
       }
       res.json(dish);
@@ -131,8 +131,11 @@ router.put("/:id", async (req, res) => {
 
 // Delete a dish by ID
 router.delete("/:id", async (req, res) => {
+  const userId = req.auth.id;
   try {
-    const dish = await Dish.findByPk(req.params.id);
+    const dish = await Dish.findOne({
+      where: { id: req.params.id, userId: userId },
+    });
     if (dish) {
       await dish.destroy();
       res.json({ message: "Dish deleted" });
@@ -146,6 +149,7 @@ router.delete("/:id", async (req, res) => {
 
 // Retrieve all dishes that contain a certain ingredient
 router.get("/containing/:ingredientName", async (req, res) => {
+  const userId = req.auth.id;
   try {
     const { ingredientName } = req.params;
     const dishes = await Dish.findAll({
@@ -156,6 +160,7 @@ router.get("/containing/:ingredientName", async (req, res) => {
           as: "ingredients",
           where: {
             name: ingredientName,
+            userId: userId,
           },
         },
       ],
@@ -163,11 +168,9 @@ router.get("/containing/:ingredientName", async (req, res) => {
     if (dishes.length > 0) {
       res.json(dishes);
     } else {
-      res
-        .status(404)
-        .json({
-          message: "No dishes found containing the specified ingredient",
-        });
+      res.status(404).json({
+        message: "No dishes found containing the specified ingredient",
+      });
     }
   } catch (err) {
     res.status(500).json({ message: err.message });

@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database');
+const User = require('./User');
 //const DishIngredient = require('./DishIngredient');
 //const Dish = require('./Dish');
 
@@ -17,6 +18,14 @@ const Ingredient = sequelize.define('Ingredient', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'userId'
+    }
+  }
 });
 
 // Define the association between Ingredient and Dish

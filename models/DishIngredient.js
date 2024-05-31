@@ -1,6 +1,7 @@
 // models/DishIngredient.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database');
+const User = require('./User');
 
 
 const DishIngredient = sequelize.define('DishIngredient', {
@@ -13,6 +14,14 @@ const DishIngredient = sequelize.define('DishIngredient', {
     type: DataTypes.STRING,
     allowNull: true,
  },
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: User,
+          key: 'userId'
+        }
+      }
 });
 
 module.exports = DishIngredient;
